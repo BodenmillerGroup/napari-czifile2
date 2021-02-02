@@ -1,10 +1,10 @@
-# napari-czifile
+# napari-czifile2
 
-[![License](https://img.shields.io/pypi/l/napari-czifile.svg?color=green)](https://github.com/BodenmillerGroup/napari-czifile/raw/master/LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/napari-czifile.svg?color=green)](https://pypi.org/project/napari-czifile)
-[![Python Version](https://img.shields.io/pypi/pyversions/napari-czifile.svg?color=green)](https://python.org)
-<!-- [![tests](https://github.com/BodenmillerGroup/napari-czifile/workflows/tests/badge.svg)](https://github.com/BodenmillerGroup/napari-czifile/actions) -->
-<!-- [![codecov](https://codecov.io/gh/BodenmillerGroup/napari-czifile/branch/master/graph/badge.svg)](https://codecov.io/gh/BodenmillerGroup/napari-czifile) -->
+[![License](https://img.shields.io/pypi/l/napari-czifile2.svg?color=green)](https://github.com/BodenmillerGroup/napari-czifile2/raw/master/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/napari-czifile2.svg?color=green)](https://pypi.org/project/napari-czifile2)
+[![Python Version](https://img.shields.io/pypi/pyversions/napari-czifile2.svg?color=green)](https://python.org)
+<!-- [![tests](https://github.com/BodenmillerGroup/napari-czifile2/workflows/tests/badge.svg)](https://github.com/BodenmillerGroup/napari-czifile2/actions) -->
+<!-- [![codecov](https://codecov.io/gh/BodenmillerGroup/napari-czifile2/branch/master/graph/badge.svg)](https://codecov.io/gh/BodenmillerGroup/napari-czifile2) -->
 
 Carl Zeiss Image (.czi) file support for napari
 
@@ -22,9 +22,9 @@ https://napari.org/docs/plugins/index.html
 
 ## Installation
 
-You can install `napari-czifile` via [pip]:
+You can install `napari-czifile2` via [pip]:
 ```shell
-pip install napari-czifile
+pip install napari-czifile2
 ```
 
 As napari is in active development, the use of virtual environments is strongly recommended.
@@ -37,7 +37,7 @@ the coverage at least stays the same before you submit a pull request.
 ## License
 
 Distributed under the terms of the [MIT] license,
-"napari-czifile" is free and open source software
+"napari-czifile2" is free and open source software
 
 ## Issues
 
@@ -53,7 +53,7 @@ If you encounter any problems, please [file an issue] along with a detailed desc
 [Apache Software License 2.0]: http://www.apache.org/licenses/LICENSE-2.0
 [Mozilla Public License 2.0]: https://www.mozilla.org/media/MPL/2.0/index.txt
 [cookiecutter-napari-plugin]: https://github.com/napari/cookiecutter-napari-plugin
-[file an issue]: https://github.com/BodenmillerGroup/napari-czifile/issues
+[file an issue]: https://github.com/BodenmillerGroup/napari-czifile2/issues
 [napari]: https://github.com/napari/napari
 [tox]: https://tox.readthedocs.io/en/latest/
 [pip]: https://pypi.org/project/pip/

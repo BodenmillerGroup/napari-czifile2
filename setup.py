@@ -22,14 +22,14 @@ with open('requirements.txt') as f:
 
 
 # https://github.com/pypa/setuptools_scm
-use_scm = {"write_to": "napari_czifile/_version.py"}
+use_scm = {"write_to": "napari_czifile2/_version.py"}
 
 setup(
-    name='napari-czifile',
+    name='napari-czifile2',
     author='Jonas Windhager',
     author_email='jonas.windhager@uzh.ch',
     license='MIT',
-    url='https://github.com/jwindhager/napari-czifile',
+    url='https://github.com/jwindhager/napari-czifile2',
     description='Carl Zeiss Image (.czi) file support for napari',
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
@@ -53,7 +53,7 @@ setup(
     ],
     entry_points={
         'napari.plugin': [
-            'napari-czifile = napari_czifile',
+            'napari-czifile2 = napari_czifile2',
         ],
     },
 )
