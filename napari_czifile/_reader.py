@@ -1,78 +1,94 @@
-"""
-This module is an example of a barebones numpy reader plugin for napari.
-
-It implements the ``napari_get_reader`` hook specification, (to create
-a reader plugin) but your plugin may choose to implement any of the hook
-specifications offered by napari.
-see: https://napari.org/docs/dev/plugins/hook_specifications.html
-
-Replace code below accordingly.  For complete documentation see:
-https://napari.org/docs/dev/plugins/for_plugin_developers.html
-"""
 import numpy as np
+
+from xml.etree import ElementTree
+from czifile import CziFile
+from multiprocessing import cpu_count
 from napari_plugin_engine import napari_hook_implementation
+from pathlib import Path
 
 
 @napari_hook_implementation
 def napari_get_reader(path):
-    """A basic implementation of the napari_get_reader hook specification.
-
-    Parameters
-    ----------
-    path : str or list of str
-        Path to file, or list of paths.
-
-    Returns
-    -------
-    function or None
-        If the path is a recognized format, return a function that accepts the
-        same path or list of paths, and returns a list of layer data tuples.
-    """
     if isinstance(path, list):
-        # reader plugins may be handed single path, or a list of paths.
-        # if it is a list, it is assumed to be an image stack...
-        # so we are only going to look at the first file.
-        path = path[0]
-
-    # if we know we cannot read the file, we immediately return None.
-    if not path.endswith(".npy"):
-        return None
-
-    # otherwise we return the *function* that can read ``path``.
+        if any(Path(p).suffix.lower() != '.czi' for p in path):
+            return None
+    else:
+        if Path(path).suffix.lower() != '.czi':
+            return None
     return reader_function
 
 
 def reader_function(path):
-    """Take a path or list of paths and return a list of LayerData tuples.
+    paths = [path] if not isinstance(path, list) else path
+    layer_data = []
+    for path in paths:
+        with CziFile(path) as czi_file:
+            data = czi_file.asarray(max_workers=cpu_count())
+            czi_metadata = ElementTree.fromstring(czi_file.metadata())
+            scale_x = _parse_scaling(czi_metadata, 'X', multiplier=10. ** 6)
+            scale_y = _parse_scaling(czi_metadata, 'Y', multiplier=10. ** 6)
+            scale_z = _parse_scaling(czi_metadata, 'Z', multiplier=10. ** 6)
+            scale_t = _parse_scaling(czi_metadata, 'T')
+            translate_x = _get_translation(czi_file, 'X') * scale_x
+            translate_y = _get_translation(czi_file, 'Y') * scale_y
+            translate_z = _get_translation(czi_file, 'Z') * scale_z
+            translate_t = _get_translation(czi_file, 'T') * scale_t
+            metadata = {
+                'rgb': False,
+                'scale': (scale_t, scale_z, scale_y, scale_x),
+                'translate': (translate_t, translate_z, translate_y, translate_x),
+            }
+            axis_indices = []
+            if 'T' in czi_file.axes:
+                axis_indices.append(czi_file.axes.index('T'))
+            else:
+                axis_indices.append(data.ndim)
+                data = np.expand_dims(data, -1)
+            if 'Z' in czi_file.axes:
+                axis_indices.append(czi_file.axes.index('Z'))
+            else:
+                axis_indices.append(data.ndim)
+                data = np.expand_dims(data, -1)
+            if 'C' in czi_file.axes:
+                metadata['channel_axis'] = 2
+                channel_names = _parse_channel_names(czi_file, czi_metadata)
+                if channel_names is not None:
+                    metadata['name'] = channel_names
+                axis_indices.append(czi_file.axes.index('C'))
+            else:
+                axis_indices.append(data.ndim)
+                data = np.expand_dims(data, -1)
+            axis_indices.append(czi_file.axes.index('Y'))
+            axis_indices.append(czi_file.axes.index('X'))
+            if '0' in czi_file.axes:
+                metadata['rgb'] = True
+                axis_indices.append(czi_file.axes.index('0'))
+            n = len(axis_indices)
+            for axis_index in range(len(czi_file.axes)):
+                if axis_index not in axis_indices:
+                    axis_indices.append(axis_index)
+            data = data.transpose(axis_indices)
+            data.shape = data.shape[:n]
+            layer_data.append((data, metadata, 'image'))
+    return layer_data
 
-    Readers are expected to return data as a list of tuples, where each tuple
-    is (data, [add_kwargs, [layer_type]]), "add_kwargs" and "layer_type" are
-    both optional.
 
-    Parameters
-    ----------
-    path : str or list of str
-        Path to file, or list of paths.
+def _get_translation(czi_file: CziFile, dimension: str) -> float:
+    return min((dimension_entry.start
+                for directory_entry in czi_file.filtered_subblock_directory
+                for dimension_entry in directory_entry.dimension_entries
+                if dimension_entry.dimension == dimension), default=0.)
 
-    Returns
-    -------
-    layer_data : list of tuples
-        A list of LayerData tuples where each tuple in the list contains
-        (data, metadata, layer_type), where data is a numpy array, metadata is
-        a dict of keyword arguments for the corresponding viewer.add_* method
-        in napari, and layer_type is a lower-case string naming the type of layer.
-        Both "meta", and "layer_type" are optional. napari will default to
-        layer_type=="image" if not provided
-    """
-    # handle both a string and a list of strings
-    paths = [path] if isinstance(path, str) else path
-    # load all files into array
-    arrays = [np.load(_path) for _path in paths]
-    # stack arrays into single array
-    data = np.squeeze(np.stack(arrays))
 
-    # optional kwargs for the corresponding viewer.add_* method
-    add_kwargs = {}
+def _parse_scaling(czi_metadata: ElementTree.Element, dimension: str, multiplier: float = 1.) -> float:
+    scale_element = czi_metadata.find(f'.//Metadata/Scaling/Items/Distance[@Id="{dimension}"]/Value')
+    if scale_element is not None:
+        return float(scale_element.text) * multiplier
+    return 1.
 
-    layer_type = "image"  # optional, default is "image"
-    return [(data, add_kwargs, layer_type)]
+
+def _parse_channel_names(czi_file: CziFile, czi_metadata: ElementTree.Element):
+    channel_elements = czi_metadata.findall('.//Metadata/Information/Image/Dimensions/Channels/Channel')
+    if len(channel_elements) == czi_file.shape[czi_file.axes.index('C')]:
+        return [c.attrib.get('Name', c.attrib['Id']) for c in channel_elements]
+    return None
