@@ -29,7 +29,7 @@ setup(
     author='Jonas Windhager',
     author_email='jonas.windhager@uzh.ch',
     license='MIT',
-    url='https://github.com/jwindhager/napari-czifile2',
+    url='https://github.com/BodenmillerGroup/napari-czifile2',
     description='Carl Zeiss Image (.czi) file support for napari',
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
