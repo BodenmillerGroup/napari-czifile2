@@ -29,16 +29,16 @@ def reader_function(path):
             scale_y = _parse_scaling(czi_metadata, 'Y', multiplier=10. ** 6)
             scale_z = _parse_scaling(czi_metadata, 'Z', multiplier=10. ** 6)
             scale_t = _parse_scaling(czi_metadata, 'T')
-            translate_x = _get_translation(czi_file, 'X') * scale_x
-            translate_y = _get_translation(czi_file, 'Y') * scale_y
-            translate_z = _get_translation(czi_file, 'Z') * scale_z
-            translate_t = _get_translation(czi_file, 'T') * scale_t
-            metadata = {
+            axis_indices = []
+            shared_metadata = {
                 'rgb': False,
                 'scale': (scale_t, scale_z, scale_y, scale_x),
-                'translate': (translate_t, translate_z, translate_y, translate_x),
             }
-            axis_indices = []
+            if 'S' in czi_file.axes:
+                axis_indices.append(czi_file.axes.index('S'))
+            else:
+                axis_indices.append(0)
+                data = np.expand_dims(data, 0)
             if 'T' in czi_file.axes:
                 axis_indices.append(czi_file.axes.index('T'))
             else:
@@ -50,10 +50,10 @@ def reader_function(path):
                 axis_indices.append(data.ndim)
                 data = np.expand_dims(data, -1)
             if 'C' in czi_file.axes:
-                metadata['channel_axis'] = 2
+                shared_metadata['channel_axis'] = 2
                 channel_names = _parse_channel_names(czi_file, czi_metadata)
                 if channel_names is not None:
-                    metadata['name'] = channel_names
+                    shared_metadata['name'] = channel_names
                 axis_indices.append(czi_file.axes.index('C'))
             else:
                 axis_indices.append(data.ndim)
@@ -61,7 +61,7 @@ def reader_function(path):
             axis_indices.append(czi_file.axes.index('Y'))
             axis_indices.append(czi_file.axes.index('X'))
             if '0' in czi_file.axes:
-                metadata['rgb'] = True
+                shared_metadata['rgb'] = True
                 axis_indices.append(czi_file.axes.index('0'))
             n = len(axis_indices)
             for axis_index in range(len(czi_file.axes)):
@@ -69,15 +69,19 @@ def reader_function(path):
                     axis_indices.append(axis_index)
             data = data.transpose(axis_indices)
             data.shape = data.shape[:n]
-            layer_data.append((data, metadata, 'image'))
+            for series_index, series_data in enumerate(data):
+                translate_t = _get_translation(czi_file, series_index, 'T') * scale_t
+                translate_z = _get_translation(czi_file, series_index, 'Z') * scale_z
+                translate_y = _get_translation(czi_file, series_index, 'Y') * scale_y
+                translate_x = _get_translation(czi_file, series_index, 'X') * scale_x
+                metadata = {
+                    **shared_metadata,
+                    'translate': (translate_t, translate_z, translate_y, translate_x),
+                }
+                if 'name' in metadata:
+                    metadata['name'] = [f'S{series_index:02d} {channel_name}' for channel_name in metadata['name']]
+                layer_data.append((series_data, metadata, 'image'))
     return layer_data
-
-
-def _get_translation(czi_file: CziFile, dimension: str) -> float:
-    return min((dimension_entry.start
-                for directory_entry in czi_file.filtered_subblock_directory
-                for dimension_entry in directory_entry.dimension_entries
-                if dimension_entry.dimension == dimension), default=0.)
 
 
 def _parse_scaling(czi_metadata: ElementTree.Element, dimension: str, multiplier: float = 1.) -> float:
@@ -92,3 +96,16 @@ def _parse_channel_names(czi_file: CziFile, czi_metadata: ElementTree.Element):
     if len(channel_elements) == czi_file.shape[czi_file.axes.index('C')]:
         return [c.attrib.get('Name', c.attrib['Id']) for c in channel_elements]
     return None
+
+
+def _get_translation(czi_file: CziFile, series_index: int, dimension: str) -> float:
+    return min((
+        dim_entry.start
+        for dir_entry in czi_file.filtered_subblock_directory
+        for dim_entry in dir_entry.dimension_entries
+        if dim_entry.dimension == dimension and series_index in _get_series_indices(dir_entry)
+    ), default=0.)
+
+
+def _get_series_indices(directory_entry):
+    return (dim_entry.start for dim_entry in directory_entry.dimension_entries if dim_entry.dimension == 'S')
