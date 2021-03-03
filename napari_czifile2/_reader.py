@@ -69,18 +69,18 @@ def reader_function(path):
                     axis_indices.append(axis_index)
             data = data.transpose(axis_indices)
             data.shape = data.shape[:n]
-            for series_index, series_data in enumerate(data):
-                translate_t = _get_translation(czi_file, series_index, 'T') * scale_t
-                translate_z = _get_translation(czi_file, series_index, 'Z') * scale_z
-                translate_y = _get_translation(czi_file, series_index, 'Y') * scale_y
-                translate_x = _get_translation(czi_file, series_index, 'X') * scale_x
+            for scene_index, scene_data in enumerate(data):
+                translate_t = _get_translation(czi_file, scene_index, 'T') * scale_t
+                translate_z = _get_translation(czi_file, scene_index, 'Z') * scale_z
+                translate_y = _get_translation(czi_file, scene_index, 'Y') * scale_y
+                translate_x = _get_translation(czi_file, scene_index, 'X') * scale_x
                 metadata = {
                     **shared_metadata,
                     'translate': (translate_t, translate_z, translate_y, translate_x),
                 }
                 if 'name' in metadata:
-                    metadata['name'] = [f'S{series_index:02d} {channel_name}' for channel_name in metadata['name']]
-                layer_data.append((series_data, metadata, 'image'))
+                    metadata['name'] = [f'S{scene_index:02d} {channel_name}' for channel_name in metadata['name']]
+                layer_data.append((scene_data, metadata, 'image'))
     return layer_data
 
 
@@ -98,14 +98,14 @@ def _parse_channel_names(czi_file: CziFile, czi_metadata: ElementTree.Element):
     return None
 
 
-def _get_translation(czi_file: CziFile, series_index: int, dimension: str) -> float:
+def _get_translation(czi_file: CziFile, scene_index: int, dimension: str) -> float:
     return min((
         dim_entry.start
         for dir_entry in czi_file.filtered_subblock_directory
         for dim_entry in dir_entry.dimension_entries
-        if dim_entry.dimension == dimension and series_index in _get_series_indices(dir_entry)
+        if dim_entry.dimension == dimension and scene_index in _get_scene_indices(dir_entry)
     ), default=0.)
 
 
-def _get_series_indices(directory_entry):
+def _get_scene_indices(directory_entry):
     return (dim_entry.start for dim_entry in directory_entry.dimension_entries if dim_entry.dimension == 'S')
