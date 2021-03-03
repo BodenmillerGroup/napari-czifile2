@@ -1,10 +1,10 @@
 import numpy as np
 
-from xml.etree import ElementTree
-from czifile import CziFile
+from czifile import CziFile, DirectoryEntryDV
 from multiprocessing import cpu_count
 from napari_plugin_engine import napari_hook_implementation
 from pathlib import Path
+from xml.etree import ElementTree
 
 
 @napari_hook_implementation
@@ -101,11 +101,15 @@ def _parse_channel_names(czi_file: CziFile, czi_metadata: ElementTree.Element):
 def _get_translation(czi_file: CziFile, scene_index: int, dimension: str) -> float:
     return min((
         dim_entry.start
-        for dir_entry in czi_file.filtered_subblock_directory
-        for dim_entry in dir_entry.dimension_entries
-        if dim_entry.dimension == dimension and scene_index in _get_scene_indices(dir_entry)
+        for dir_entry in czi_file.filtered_subblock_directory if _get_scene_index(dir_entry) == scene_index
+        for dim_entry in dir_entry.dimension_entries if dim_entry.dimension == dimension
     ), default=0.)
 
 
-def _get_scene_indices(directory_entry):
-    return (dim_entry.start for dim_entry in directory_entry.dimension_entries if dim_entry.dimension == 'S')
+def _get_scene_index(dir_entry: DirectoryEntryDV) -> int:
+    scene_indices = set(dim_entry.start for dim_entry in dir_entry.dimension_entries if dim_entry.dimension == 'S')
+    if len(scene_indices) == 0:
+        raise ValueError('Invalid metadata: no scene information available for directory entry')
+    if len(scene_indices) > 1:
+        raise ValueError('Invalid metadata: directory entry belongs to more than one scene')
+    return scene_indices.pop()
