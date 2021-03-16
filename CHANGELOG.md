@@ -14,5 +14,5 @@ Updated documentation, added multi-scene support (#2, fixes #1)
 Last release before introducing this changelog
 
 
-[v0.2.0]: https://github.com/BodenmillerGroup/napari-imc/compare/v0.1.1...v0.2.0
-[v0.5.1]: https://github.com/BodenmillerGroup/napari-imc/releases/tag/v0.5.1
+[v0.2.0]: https://github.com/BodenmillerGroup/napari-czifile2/compare/v0.1.1...v0.2.0
+[v0.5.1]: https://github.com/BodenmillerGroup/napari-czifile2/releases/tag/v0.5.1
