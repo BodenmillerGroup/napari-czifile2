@@ -1,60 +1,47 @@
 # napari-czifile2
 
-[![License](https://img.shields.io/pypi/l/napari-czifile2.svg?color=green)](https://github.com/BodenmillerGroup/napari-czifile2/raw/master/LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/napari-czifile2.svg?color=green)](https://pypi.org/project/napari-czifile2)
-[![Python Version](https://img.shields.io/pypi/pyversions/napari-czifile2.svg?color=green)](https://python.org)
-<!-- [![tests](https://github.com/BodenmillerGroup/napari-czifile2/workflows/tests/badge.svg)](https://github.com/BodenmillerGroup/napari-czifile2/actions) -->
-<!-- [![codecov](https://codecov.io/gh/BodenmillerGroup/napari-czifile2/branch/master/graph/badge.svg)](https://codecov.io/gh/BodenmillerGroup/napari-czifile2) -->
+![PyPI](https://img.shields.io/pypi/v/napari-czifile2)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/napari-czifile2)
+![PyPI - License](https://img.shields.io/pypi/l/napari-czifile2)
+![GitHub issues](https://img.shields.io/github/issues/BodenmillerGroup/napari-czifile2)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/BodenmillerGroup/napari-czifile2)
 
-Carl Zeiss Image (.czi) file support for napari
+Carl Zeiss Image (.czi) file type support for napari
 
-----------------------------------
+Open .czi files and interactively view scenes co-registered in the machine's coordinate system using napari
 
-This [napari] plugin was generated with [Cookiecutter] using with [@napari]'s [cookiecutter-napari-plugin] template.
+## Requirements
 
-<!--
-Don't miss the full getting started guide to set up your new package:
-https://github.com/napari/cookiecutter-napari-plugin#getting-started
+This package requires Python 3.7 or newer.
 
-and review the napari docs for plugin developers:
-https://napari.org/docs/plugins/index.html
--->
+Python package dependencies are listed in [requirements.txt](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/requirements.txt).
+
+Please note that napari is under active development. Using virtual environments is strongly encouraged.
 
 ## Installation
 
-You can install `napari-czifile2` via [pip]:
-```shell
-pip install napari-czifile2
-```
+Ensure that `napari[all]` is installed.
 
-As napari is in active development, the use of virtual environments is strongly recommended.
+Install napari-czifile2 and its dependencies with:
+
+    pip install napari-czifile2
+
+## Usage
+
+Use `napari` to open Carl Zeiss Image (.czi) files
+
+## Authors
+
+Created and maintained by Jonas Windhager [jonas.windhager@uzh.ch](mailto:jonas.windhager@uzh.ch)
 
 ## Contributing
 
-Contributions are very welcome. Tests can be run with [tox], please ensure
-the coverage at least stays the same before you submit a pull request.
+[Contributing](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/CONTRIBUTING.md)
+
+## Changelog
+
+[Changelog](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/CHANGELOG.md)
 
 ## License
 
-Distributed under the terms of the [MIT] license,
-"napari-czifile2" is free and open source software
-
-## Issues
-
-If you encounter any problems, please [file an issue] along with a detailed description.
-
-[napari]: https://github.com/napari/napari
-[Cookiecutter]: https://github.com/audreyr/cookiecutter
-[@napari]: https://github.com/napari
-[MIT]: http://opensource.org/licenses/MIT
-[BSD-3]: http://opensource.org/licenses/BSD-3-Clause
-[GNU GPL v3.0]: http://www.gnu.org/licenses/gpl-3.0.txt
-[GNU LGPL v3.0]: http://www.gnu.org/licenses/lgpl-3.0.txt
-[Apache Software License 2.0]: http://www.apache.org/licenses/LICENSE-2.0
-[Mozilla Public License 2.0]: https://www.mozilla.org/media/MPL/2.0/index.txt
-[cookiecutter-napari-plugin]: https://github.com/napari/cookiecutter-napari-plugin
-[file an issue]: https://github.com/BodenmillerGroup/napari-czifile2/issues
-[napari]: https://github.com/napari/napari
-[tox]: https://tox.readthedocs.io/en/latest/
-[pip]: https://pypi.org/project/pip/
-[PyPI]: https://pypi.org/
+[MIT](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/LICENSE.md)
