@@ -1,10 +1,8 @@
-import numpy as np
-
-from xml.etree import ElementTree
-from czifile import CziFile
 from multiprocessing import cpu_count
 from napari_plugin_engine import napari_hook_implementation
 from pathlib import Path
+
+from napari_czifile2.io import CZISceneFile
 
 
 @napari_hook_implementation
@@ -18,77 +16,25 @@ def napari_get_reader(path):
     return reader_function
 
 
-def reader_function(path):
-    paths = [path] if not isinstance(path, list) else path
+def reader_function(paths):
     layer_data = []
+    if not isinstance(paths, list):
+        paths = [paths]
     for path in paths:
-        with CziFile(path) as czi_file:
-            data = czi_file.asarray(max_workers=cpu_count())
-            czi_metadata = ElementTree.fromstring(czi_file.metadata())
-            scale_x = _parse_scaling(czi_metadata, 'X', multiplier=10. ** 6)
-            scale_y = _parse_scaling(czi_metadata, 'Y', multiplier=10. ** 6)
-            scale_z = _parse_scaling(czi_metadata, 'Z', multiplier=10. ** 6)
-            scale_t = _parse_scaling(czi_metadata, 'T')
-            translate_x = _get_translation(czi_file, 'X') * scale_x
-            translate_y = _get_translation(czi_file, 'Y') * scale_y
-            translate_z = _get_translation(czi_file, 'Z') * scale_z
-            translate_t = _get_translation(czi_file, 'T') * scale_t
-            metadata = {
-                'rgb': False,
-                'scale': (scale_t, scale_z, scale_y, scale_x),
-                'translate': (translate_t, translate_z, translate_y, translate_x),
-            }
-            axis_indices = []
-            if 'T' in czi_file.axes:
-                axis_indices.append(czi_file.axes.index('T'))
-            else:
-                axis_indices.append(data.ndim)
-                data = np.expand_dims(data, -1)
-            if 'Z' in czi_file.axes:
-                axis_indices.append(czi_file.axes.index('Z'))
-            else:
-                axis_indices.append(data.ndim)
-                data = np.expand_dims(data, -1)
-            if 'C' in czi_file.axes:
-                metadata['channel_axis'] = 2
-                channel_names = _parse_channel_names(czi_file, czi_metadata)
-                if channel_names is not None:
-                    metadata['name'] = channel_names
-                axis_indices.append(czi_file.axes.index('C'))
-            else:
-                axis_indices.append(data.ndim)
-                data = np.expand_dims(data, -1)
-            axis_indices.append(czi_file.axes.index('Y'))
-            axis_indices.append(czi_file.axes.index('X'))
-            if '0' in czi_file.axes:
-                metadata['rgb'] = True
-                axis_indices.append(czi_file.axes.index('0'))
-            n = len(axis_indices)
-            for axis_index in range(len(czi_file.axes)):
-                if axis_index not in axis_indices:
-                    axis_indices.append(axis_index)
-            data = data.transpose(axis_indices)
-            data.shape = data.shape[:n]
+        num_scenes = CZISceneFile.get_num_scenes(path)
+        for scene_index in range(num_scenes):
+            with CZISceneFile(path, scene_index) as f:
+                data = f.as_tzcyx0_array(max_workers=cpu_count())
+                metadata = {
+                    'rgb': f.is_rgb,
+                    'channel_axis': 2,
+                    'translate': (f.pos_t_seconds, f.pos_z_um, f.pos_y_um, f.pos_x_um),
+                    'scale': (f.scale_t_seconds, f.scale_z_um, f.scale_y_um, f.scale_x_um),
+                }
+                if f.channel_names is not None:
+                    if num_scenes == 1:
+                        metadata['name'] = f.channel_names
+                    elif num_scenes > 1:
+                        metadata['name'] = [f'S{scene_index:02d} {channel_name}' for channel_name in f.channel_names]
             layer_data.append((data, metadata, 'image'))
     return layer_data
-
-
-def _get_translation(czi_file: CziFile, dimension: str) -> float:
-    return min((dimension_entry.start
-                for directory_entry in czi_file.filtered_subblock_directory
-                for dimension_entry in directory_entry.dimension_entries
-                if dimension_entry.dimension == dimension), default=0.)
-
-
-def _parse_scaling(czi_metadata: ElementTree.Element, dimension: str, multiplier: float = 1.) -> float:
-    scale_element = czi_metadata.find(f'.//Metadata/Scaling/Items/Distance[@Id="{dimension}"]/Value')
-    if scale_element is not None:
-        return float(scale_element.text) * multiplier
-    return 1.
-
-
-def _parse_channel_names(czi_file: CziFile, czi_metadata: ElementTree.Element):
-    channel_elements = czi_metadata.findall('.//Metadata/Information/Image/Dimensions/Channels/Channel')
-    if len(channel_elements) == czi_file.shape[czi_file.axes.index('C')]:
-        return [c.attrib.get('Name', c.attrib['Id']) for c in channel_elements]
-    return None
