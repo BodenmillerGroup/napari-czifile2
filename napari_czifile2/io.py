@@ -104,7 +104,9 @@ class CZISceneFile(CziFile):
     def _get_scale(self, dimension: str, multiplier: float = 1.):
         scale_element = self._metadata_xml.find(f'.//Metadata/Scaling/Items/Distance[@Id="{dimension}"]/Value')
         if scale_element is not None:
-            return float(scale_element.text) * multiplier
+            scale = float(scale_element.text)
+            if scale > 0:
+                return scale * multiplier
         return 1.
 
     @lazyattr
