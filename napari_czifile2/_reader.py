@@ -25,6 +25,10 @@ def reader_function(paths):
         for scene_index in range(num_scenes):
             with CZISceneFile(path, scene_index) as f:
                 data = f.as_tzcyx0_array(max_workers=cpu_count())
+                if not f.is_rgb:
+                    # https://github.com/napari/napari/issues/2348
+                    # https://github.com/BodenmillerGroup/napari-czifile2/issues/4
+                    data = data[:, :, :, :, :, 0]
                 metadata = {
                     'rgb': f.is_rgb,
                     'channel_axis': 2,
