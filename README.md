@@ -14,7 +14,7 @@ Open .czi files and interactively view scenes co-registered in the machine's coo
 
 This package requires Python 3.7 or newer.
 
-Python package dependencies are listed in [requirements.txt](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/requirements.txt).
+Python package dependencies are listed in [requirements.txt](https://github.com/BodenmillerGroup/napari-czifile2/blob/main/requirements.txt).
 
 Please note that napari is under active development. Using virtual environments is strongly encouraged.
 
@@ -36,12 +36,12 @@ Created and maintained by Jonas Windhager [jonas.windhager@uzh.ch](mailto:jonas.
 
 ## Contributing
 
-[Contributing](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/CONTRIBUTING.md)
+[Contributing](https://github.com/BodenmillerGroup/napari-czifile2/blob/main/CONTRIBUTING.md)
 
 ## Changelog
 
-[Changelog](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/CHANGELOG.md)
+[Changelog](https://github.com/BodenmillerGroup/napari-czifile2/blob/main/CHANGELOG.md)
 
 ## License
 
-[MIT](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/LICENSE.md)
+[MIT](https://github.com/BodenmillerGroup/napari-czifile2/blob/main/LICENSE.md)
