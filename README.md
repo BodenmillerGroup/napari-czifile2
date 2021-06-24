@@ -1,34 +1,30 @@
 # napari-czifile2
 
-![PyPI](https://img.shields.io/pypi/v/napari-czifile2)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/napari-czifile2)
-![PyPI - License](https://img.shields.io/pypi/l/napari-czifile2)
-![GitHub issues](https://img.shields.io/github/issues/BodenmillerGroup/napari-czifile2)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/BodenmillerGroup/napari-czifile2)
+<a href="https://pypi.org/project/napari-czifile2/">
+    <img src="https://img.shields.io/pypi/v/napari-czifile2" alt="PyPI" />
+</a>
+<a href="https://github.com/BodenmillerGroup/napari-czifile2/blob/master/LICENSE.md">
+    <img src="https://img.shields.io/pypi/l/napari-czifile2" alt="License" />
+</a>
+<a href="https://www.python.org/">
+    <img src="https://img.shields.io/pypi/pyversions/napari-czifile2" alt="Python" />
+</a>
+<a href="https://github.com/BodenmillerGroup/napari-czifile2/issues">
+    <img src="https://img.shields.io/github/issues/BodenmillerGroup/napari-czifile2" alt="Issues" />
+</a>
+<a href="https://github.com/BodenmillerGroup/napari-czifile2/pulls">
+    <img src="https://img.shields.io/github/issues-pr/BodenmillerGroup/napari-czifile2" alt="Pull requests" />
+</a>
 
 Carl Zeiss Image (.czi) file type support for napari
 
 Open .czi files and interactively view scenes co-registered in the machine's coordinate system using napari
 
-## Requirements
-
-This package requires Python 3.7 or newer.
-
-Python package dependencies are listed in [requirements.txt](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/requirements.txt).
-
-Please note that napari is under active development. Using virtual environments is strongly encouraged.
-
 ## Installation
 
-Ensure that `napari[all]` is installed.
-
-Install napari-czifile2 and its dependencies with:
+You can install napari-czifile2 via [pip](https://pypi.org/project/pip/):
 
     pip install napari-czifile2
-
-## Usage
-
-Use `napari` to open Carl Zeiss Image (.czi) files
 
 ## Authors
 
