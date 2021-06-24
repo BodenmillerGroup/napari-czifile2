@@ -3,7 +3,7 @@
 <a href="https://pypi.org/project/napari-czifile2/">
     <img src="https://img.shields.io/pypi/v/napari-czifile2" alt="PyPI" />
 </a>
-<a href="https://github.com/BodenmillerGroup/napari-czifile2/blob/master/LICENSE.md">
+<a href="https://github.com/BodenmillerGroup/napari-czifile2/blob/main/LICENSE.md">
     <img src="https://img.shields.io/pypi/l/napari-czifile2" alt="License" />
 </a>
 <a href="https://www.python.org/">
@@ -32,12 +32,12 @@ Created and maintained by Jonas Windhager [jonas.windhager@uzh.ch](mailto:jonas.
 
 ## Contributing
 
-[Contributing](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/CONTRIBUTING.md)
+[Contributing](https://github.com/BodenmillerGroup/napari-czifile2/blob/main/CONTRIBUTING.md)
 
 ## Changelog
 
-[Changelog](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/CHANGELOG.md)
+[Changelog](https://github.com/BodenmillerGroup/napari-czifile2/blob/main/CHANGELOG.md)
 
 ## License
 
-[MIT](https://github.com/BodenmillerGroup/napari-czifile2/blob/master/LICENSE.md)
+[MIT](https://github.com/BodenmillerGroup/napari-czifile2/blob/main/LICENSE.md)
