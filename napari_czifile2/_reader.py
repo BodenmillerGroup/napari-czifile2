@@ -33,7 +33,9 @@ def reader_function(paths):
                 if data.dtype == np.uint8:
                     contrast_limits = (0, 255)
                 else:
-                    contrast_limits = list(zip(np.amin(data, axis=2), np.amax(data, axis=2)))
+                    cmin = np.amin(data, axis=(0, 1, 3, 4, 5))
+                    cmax = np.amax(data, axis=(0, 1, 3, 4, 5))
+                    contrast_limits = list(zip(cmin, cmax))
                 # https://github.com/napari/napari/issues/2348
                 # https://github.com/BodenmillerGroup/napari-czifile2/issues/4
                 if not f.is_rgb:
