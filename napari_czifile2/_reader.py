@@ -27,15 +27,6 @@ def reader_function(paths):
         for scene_index in range(num_scenes):
             with CZISceneFile(path, scene_index) as f:
                 data = f.as_tzcyx0_array(max_workers=cpu_count())
-                # TODO don't explicitly set contrast_limits once fixed in napari
-                # https://github.com/napari/napari/issues/2888
-                # https://github.com/BodenmillerGroup/napari-czifile2/issues/4
-                if data.dtype == np.uint8:
-                    contrast_limits = (0, 255)
-                else:
-                    cmin = np.amin(data, axis=(0, 1, 3, 4, 5))
-                    cmax = np.amax(data, axis=(0, 1, 3, 4, 5))
-                    contrast_limits = list(zip(cmin, cmax))
                 # https://github.com/napari/napari/issues/2348
                 # https://github.com/BodenmillerGroup/napari-czifile2/issues/4
                 if not f.is_rgb:
@@ -45,7 +36,6 @@ def reader_function(paths):
                     'channel_axis': 2,
                     'translate': (f.pos_t_seconds, f.pos_z_um, f.pos_y_um, f.pos_x_um),
                     'scale': (f.scale_t_seconds, f.scale_z_um, f.scale_y_um, f.scale_x_um),
-                    'contrast_limits': contrast_limits,
                 }
                 if f.channel_names is not None:
                     if num_scenes == 1:
