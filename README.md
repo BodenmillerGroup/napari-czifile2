@@ -26,6 +26,10 @@ You can install napari-czifile2 via [pip](https://pypi.org/project/pip/):
 
     pip install napari-czifile2
 
+Alternatively, you can install napari-czifile2 via [conda](https://conda.io/):
+
+    conda install -c conda-forge napari-czifile2
+
 ## Authors
 
 Created and maintained by Jonas Windhager [jonas.windhager@uzh.ch](mailto:jonas.windhager@uzh.ch)
