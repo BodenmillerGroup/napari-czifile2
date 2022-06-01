@@ -1,0 +1,11 @@
+name: napari-czifile2
+schema_version: 0.1.0
+contributions:
+  commands:
+  - id: napari-czifile2.get_reader
+    title: Read Carl Zeiss Image (CZI) image files using czifile
+    python_name: napari_czifile2._reader:napari_get_reader
+  readers:
+  - command: napari-czifile2.get_reader
+    filename_patterns: ["*.czi"]
+    accepts_directories: false

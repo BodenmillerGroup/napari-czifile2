@@ -1,10 +1,10 @@
-import numpy as np
-
-from czifile import CziFile, DimensionEntryDV1, DirectoryEntryDV
 from pathlib import Path
-from tifffile import lazyattr
 from typing import Iterable, List, Optional, Union
 from xml.etree import ElementTree
+
+import numpy as np
+from czifile import CziFile, DimensionEntryDV1, DirectoryEntryDV
+from tifffile import lazyattr
 
 
 class CZISceneFile(CziFile):

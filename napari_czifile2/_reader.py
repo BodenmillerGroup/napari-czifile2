@@ -1,13 +1,11 @@
-import numpy as np
-
 from multiprocessing import cpu_count
-from napari_plugin_engine import napari_hook_implementation
 from pathlib import Path
 
-from napari_czifile2.io import CZISceneFile
+import numpy as np
+
+from .io import CZISceneFile
 
 
-@napari_hook_implementation
 def napari_get_reader(path):
     if isinstance(path, list):
         if any(Path(p).suffix.lower() != ".czi" for p in path):
