@@ -4,7 +4,11 @@ from xml.etree import ElementTree
 
 import numpy as np
 from czifile import CziFile, DimensionEntryDV1, DirectoryEntryDV
-from tifffile import lazyattr
+
+try:
+    from tifffile import lazyattr
+except ImportError:
+    from czifile.czifile import lazyattr
 
 
 class CZISceneFile(CziFile):
