@@ -24,7 +24,7 @@ def reader_function(paths):
         num_scenes = CZISceneFile.get_num_scenes(path)
         for scene_index in range(num_scenes):
             with CZISceneFile(path, scene_index) as f:
-                data = f.as_tzcyx0_array(max_workers=cpu_count())
+                data = f.as_tzcyx0_array(maxworkers=cpu_count())
                 # https://github.com/BodenmillerGroup/napari-czifile2/issues/5
                 contrast_limits = None
                 if data.dtype == np.uint16:
